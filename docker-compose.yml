@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "6000:8080"
+    depends_on:
+      - postgres
+      - kafka
+    networks:
+      - note-service
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "666"
+    ports:
+      - "5430:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - note-service
+
+  migrate:
+    restart: on-failure
+    env_file:
+      - .env
+    image: migrate/migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./migration:/migration
+    command:
+      ["-path", "/migration", "-database", "postgres://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}?sslmode=disable", "up"]
+    networks:
+      - note-service
+
+networks:
+  note-service:
+    driver: bridge
+
+

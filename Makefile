@@ -1,0 +1,2 @@
+dc:
+		docker-compose up
