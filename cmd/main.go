@@ -2,10 +2,13 @@ package main
 
 import (
 	"Zametki-go/internal/config"
+	"Zametki-go/internal/handler"
+	"Zametki-go/internal/repository"
+	"Zametki-go/internal/service"
 	"context"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"errors"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"os"
@@ -25,22 +28,22 @@ func run() error {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
 	cfg := config.Read()
 
-	r := chi.NewRouter()
+	db, err := config.InitDB()
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
 
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-
-	r.Use(middleware.Timeout(60 * time.Second))
-
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hi"))
-	})
+	//DI
+	repo := repository.NewRepository(db)
+	s := service.NewService(repo)
+	h := handler.NewHandler(s)
 
 	srv := http.Server{
 		Addr:           cfg.HTTPAddr,
-		Handler:        r,
+		Handler:        h.InitRoutes(),
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
@@ -62,7 +65,7 @@ func run() error {
 
 	log.Printf("Starting HTTP server on %s", cfg.HTTPAddr)
 
-	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatalf("HTTP server ListenAndServe Error: %v", err)
 	}
 
