@@ -8,10 +8,9 @@ services:
     env_file:
       - .env
     ports:
-      - "6000:8080"
+      - "8000:8000"
     depends_on:
       - postgres
-      - kafka
     networks:
       - note-service
 
