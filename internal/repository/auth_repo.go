@@ -22,11 +22,3 @@ func (r *AuthRepo) Login(username, password string) (model.User, error) {
 	}
 	return user, nil
 }
-
-func (r *AuthRepo) Logout() error {
-	return nil
-}
-
-func (r *AuthRepo) Refresh() error {
-	return nil
-}

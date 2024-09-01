@@ -8,6 +8,6 @@ RUN go build -o app main.go
 
 COPY .env .
 
-EXPOSE 6000
+EXPOSE 8000
 
 CMD ["./app"]

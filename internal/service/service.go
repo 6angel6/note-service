@@ -4,6 +4,7 @@ import "Zametki-go/internal/repository"
 
 type Authorization interface {
 	Login(username, password string) (Tokens, error)
+	Refresh(refreshToken string) (Tokens, error)
 }
 
 type Note interface {

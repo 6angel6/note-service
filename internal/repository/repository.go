@@ -7,8 +7,6 @@ import (
 
 type Authorization interface {
 	Login(username, password string) (model.User, error)
-	Logout() error
-	Refresh() error
 }
 
 type NoteRepository interface {

@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"log"
@@ -9,18 +10,18 @@ import (
 	"time"
 )
 
-var secretKet = generateSecretKey(32)
+var secretKey = generateSecretKey(32)
 var refreshSecretKey = generateSecretKey(32)
 
 func CreateToken(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
-		"exp":      time.Now().Add(time.Minute * 15).Unix(),
+		"exp":      time.Now().Add(time.Minute * 15).Unix(), // 15 минут
 		"iat":      time.Now().Unix(),
 		"app":      "note-service-token",
 	})
 
-	tokenString, err := token.SignedString(secretKet)
+	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
 		return "", err
 	}
@@ -28,9 +29,9 @@ func CreateToken(username string) (string, error) {
 	return tokenString, nil
 }
 
-func VerifyToken(tokenString string) error {
+func ValidateAccessToken(tokenString string) error {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return secretKet, nil
+		return secretKey, nil
 	})
 	if err != nil {
 		return err
@@ -40,6 +41,28 @@ func VerifyToken(tokenString string) error {
 	}
 
 	return nil
+}
+
+func ValidateRefreshToken(tokenString string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return refreshSecretKey, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		if exp, ok := claims["exp"].(float64); ok {
+			if time.Unix(int64(exp), 0).After(time.Now()) {
+				return claims, nil
+			} else {
+				return nil, errors.New("token has expired")
+			}
+		}
+		return nil, errors.New("exp field is missing in token")
+	}
+
+	return nil, fmt.Errorf("invalid token")
 }
 
 func CreateRefreshToken(username string) (string, error) {
@@ -56,20 +79,6 @@ func CreateRefreshToken(username string) (string, error) {
 	}
 
 	return refreshTokenString, nil
-}
-
-func VerifyRefreshToken(refreshTokenString string) error {
-	token, err := jwt.Parse(refreshTokenString, func(token *jwt.Token) (interface{}, error) {
-		return refreshSecretKey, nil
-	})
-	if err != nil {
-		return err
-	}
-	if !token.Valid {
-		return fmt.Errorf("invalid refresh token")
-	}
-
-	return nil
 }
 
 func generateSecretKey(length int) []byte {
