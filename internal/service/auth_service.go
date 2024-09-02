@@ -75,3 +75,7 @@ func (s *AuthService) Refresh(refreshToken string) (Tokens, error) {
 
 	return tokens, nil
 }
+
+func (s *AuthService) GetUserIdByUsername(username string) (string, error) {
+	return s.repo.GetUserIDByUsername(username)
+}

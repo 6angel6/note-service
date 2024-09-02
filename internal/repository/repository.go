@@ -7,9 +7,12 @@ import (
 
 type Authorization interface {
 	Login(username, password string) (model.User, error)
+	GetUserIDByUsername(username string) (string, error)
 }
 
 type NoteRepository interface {
+	Create(note model.Note, userId string) (model.Note, error)
+	GetAllNotesByUser(userId string) ([]model.Note, error)
 }
 
 type Repository struct {

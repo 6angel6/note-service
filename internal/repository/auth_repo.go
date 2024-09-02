@@ -4,6 +4,7 @@ import (
 	"Zametki-go/internal/model"
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 type AuthRepo struct {
@@ -21,4 +22,16 @@ func (r *AuthRepo) Login(username, password string) (model.User, error) {
 		return model.User{}, errors.New("invalid username or password")
 	}
 	return user, nil
+}
+
+func (r *AuthRepo) GetUserIDByUsername(username string) (string, error) {
+	var userId string
+	err := r.db.QueryRow("SELECT user_id FROM users WHERE username = $1", username).Scan(&userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", fmt.Errorf("user not found")
+		}
+		return "", err
+	}
+	return userId, nil
 }

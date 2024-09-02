@@ -16,7 +16,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 		tokenString = tokenString[len("Bearer "):]
 
-		err := jwt.ValidateAccessToken(tokenString)
+		_, err := jwt.ValidateAccessToken(tokenString)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			fmt.Fprint(w, "Invalid token")

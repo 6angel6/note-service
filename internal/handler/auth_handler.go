@@ -13,7 +13,7 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 	var user dto.UserRequest
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid dto payload"})
 		return
 	}
 
