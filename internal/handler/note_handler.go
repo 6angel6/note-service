@@ -1,10 +1,9 @@
 package handler
 
 import (
-	"Zametki-go/internal/model/dto"
+	"Zametki-go/internal/dto/request"
 	"Zametki-go/pkg/util"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -13,7 +12,7 @@ func (h *Handler) createNote(w http.ResponseWriter, r *http.Request) {
 
 	userId, ok := r.Context().Value("user_id").(string)
 	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized"})
 	}
 
@@ -23,23 +22,25 @@ func (h *Handler) createNote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
 	}
 
 	validatedText, _ := util.SpellerApi(req.Content)
 	if len(validatedText) > 0 {
 		w.WriteHeader(http.StatusBadRequest)
-
 		errorResponse := util.ErrorResponse{Errors: validatedText}
 		json.NewEncoder(w).Encode(errorResponse)
+		return
 
 	} else {
 		err = h.service.Create(req, userId)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintln(w, `{"message": "Заметка успешно создана!"}`)
+		json.NewEncoder(w).Encode(map[string]string{"info": "Message saved!"})
 	}
 
 }
