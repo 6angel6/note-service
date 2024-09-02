@@ -16,13 +16,13 @@ CREATE TABLE notes (
 
 INSERT INTO users (username, password)
 VALUES
-    ('angel', '123456'),
-    ('max', 'qwerty');
+    ('user_test', '123456'),
+    ('bot_test', 'qwerty');
 
 
 INSERT INTO notes (user_id, content)
 VALUES
-    (1, 'First note for angel.'),
-    (1, 'Second note for angel.'),
-    (2, 'First note for max.'),
-    (2, 'Second note for max.');
+    (1, 'First note for user_test.'),
+    (1, 'Second note for user_test.'),
+    (2, 'First note for bot_test.'),
+    (2, 'Second note for bot_test.');
