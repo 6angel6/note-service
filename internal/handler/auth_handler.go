@@ -1,7 +1,7 @@
 package handler
 
 import (
-	dto "Zametki-go/internal/dto/request"
+	"Zametki-go/internal/model/dto/request"
 	"encoding/json"
 	"net/http"
 	"time"

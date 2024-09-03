@@ -1,8 +1,8 @@
 package service
 
 import (
-	"Zametki-go/internal/dto/request"
 	"Zametki-go/internal/model"
+	"Zametki-go/internal/model/dto/request"
 	"Zametki-go/internal/repository"
 	"errors"
 )
