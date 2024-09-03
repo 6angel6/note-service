@@ -3,7 +3,6 @@ package handler
 import (
 	"Zametki-go/internal/service"
 	"Zametki-go/pkg/jwt"
-	mw "Zametki-go/pkg/middleware"
 	"context"
 	"fmt"
 	"github.com/go-chi/chi/v5"
@@ -31,7 +30,7 @@ func (h *Handler) InitRoutes() chi.Router {
 	r.Route("/api/auth", func(r chi.Router) {
 		r.Post("/login", h.login)
 		r.Get("/refresh", h.refresh)
-		r.With(mw.AuthMiddleware).Post("/logout", h.logout)
+		r.Post("/logout", h.logout)
 	})
 
 	r.Route("/api/notes", func(r chi.Router) {

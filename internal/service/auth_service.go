@@ -62,15 +62,8 @@ func (s *AuthService) Refresh(refreshToken string) (Tokens, error) {
 		return Tokens{}, err
 	}
 
-	newRefreshToken, err := jwt.CreateRefreshToken(username)
-	if err != nil {
-		log.Println("Error creating new refresh token:", err)
-		return Tokens{}, err
-	}
-
 	tokens := Tokens{
-		AccessToken:  accessToken,
-		RefreshToken: newRefreshToken,
+		AccessToken: accessToken,
 	}
 
 	return tokens, nil
