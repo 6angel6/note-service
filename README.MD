@@ -28,7 +28,7 @@
 
 1. Склонируйте репозиторий:
     ```sh
-    https://github.com/6angel6/note-service.git
+   git clone https://github.com/6angel6/note-service.git
     ```
 
 2. Постройте и запустите контейнеры с использованием Docker Compose внутри проекта:
