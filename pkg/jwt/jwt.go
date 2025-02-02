@@ -42,7 +42,7 @@ func ValidateAccessToken(tokenString string) (jwt.MapClaims, error) {
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
 		return claims, nil
 	}
-
+	//git
 	return nil, fmt.Errorf("invalid token claims")
 }
 
