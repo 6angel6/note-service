@@ -21,6 +21,11 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
+image: golang:1.22  # Используем официальный образ Go
+before_script:
+  - export PATH=$PATH:/usr/local/go/bin
+
+
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
