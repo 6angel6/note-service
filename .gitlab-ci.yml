@@ -39,7 +39,7 @@ unit-test-job:   # This job runs in the test stage.
     - sleep 60
     - echo "Code coverage is 90%"
     - go test ./...
-    - go test -cover ./...
+    - go test -cover ./ #
 
 
 deploy-job:      # This job runs in the deploy stage.
